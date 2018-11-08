@@ -12,6 +12,8 @@ base64 encoded `uid=1000(amyang) gid=1000(amyang) groups=1000(amyang),10(wheel),
 
 ## Usage
 
+gopher.bmp is required, in order to be more normal.
+
 ### Client
 
 `./client_linux -server 127.0.0.1 -port 1337`

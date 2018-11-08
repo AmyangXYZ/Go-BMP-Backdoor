@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/base64"
+	"fmt"
 	"image"
 	"image/color"
+	"image/draw"
 	"os"
 	"strings"
 
@@ -11,7 +13,7 @@ import (
 )
 
 // func main() {
-// 	err := write("/home/amyang/Projects/Backdoor-BMP", "test.bmp")
+// 	err := write("biubiubiu", "test.bmp")
 // 	if err != nil {
 // 		fmt.Println(err)
 // 	}
@@ -20,11 +22,32 @@ import (
 // 	if err != nil {
 // 		fmt.Println(err)
 // 	}
-// 	fmt.Println(text)
+// 	fmt.Println(err, text)
 // }
 
 func write(text, outFileName string) error {
-	encryptedBar := image.NewRGBA(image.Rect(0, 0, 800, 16))
+	// combine with a normal image
+	img0 := image.NewRGBA(image.Rect(0, 0, 500, 313))
+	file1, err := os.Open("gopher.bmp")
+	if err != nil {
+		fmt.Println("need gopher.bmp")
+		return err
+	}
+	defer file1.Close()
+	img1, _ := bmp.Decode(file1)
+	// fmt.Println(img1.At(0, 0))
+	// output: 24 189 209
+
+	encryptedBar := image.NewRGBA(image.Rect(0, 0, 500, 1))
+
+	// set background
+	for i := 0; i < 500; i++ {
+		encryptedBar.Set(i, 0, color.RGBA{
+			R: 24,
+			G: 189,
+			B: 209,
+		})
+	}
 
 	sEnc := base64.StdEncoding.EncodeToString([]byte(text))
 	data := []byte(sEnc)
@@ -47,12 +70,17 @@ func write(text, outFileName string) error {
 		x++
 	}
 
+	// combine
+	draw.Draw(img0, img0.Bounds(), img1, img1.Bounds().Min, draw.Src)
+	draw.Draw(img0, img0.Bounds(), encryptedBar, encryptedBar.Bounds().Min.Sub(image.Pt(0, 0)), draw.Src)
+
 	outputFile, err := os.Create(outFileName)
 	defer outputFile.Close()
 	if err != nil {
 		return err
 	}
-	err = bmp.Encode(outputFile, encryptedBar)
+
+	err = bmp.Encode(outputFile, img0)
 	if err != nil {
 		return err
 	}
