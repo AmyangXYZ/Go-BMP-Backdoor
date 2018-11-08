@@ -24,7 +24,7 @@ import (
 // }
 
 func write(text, outFileName string) error {
-	encryptedBar := image.NewRGBA(image.Rect(0, 0, 100, 16))
+	encryptedBar := image.NewRGBA(image.Rect(0, 0, 64, 16))
 
 	sEnc := base64.StdEncoding.EncodeToString([]byte(text))
 	data := []byte(sEnc)
